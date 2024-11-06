@@ -1,0 +1,5 @@
+addict==2.4.0
+anyconfig==0.14.0
+pyjson5==1.6.7
+vscode.py==2.0.0b2
+websockets==13.1
