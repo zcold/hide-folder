@@ -4,6 +4,8 @@
 
 This VSCode extension show/hide folders in workspace. The motivation of this extension is that when we are working in a multi-root workspace with multiple roots, we may want to focus on a task that requires need few folders.
 
+This extension is built using [vscode.py](https://pypi.org/project/vscode.py/).
+
 ## 1. Features
 
 1. Show/Hide folders in workspace by updating the workspace file (`*.code-workspace`)
