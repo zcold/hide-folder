@@ -3,7 +3,10 @@
 """
 
 import os
+import subprocess
+import sys
 from pathlib import Path
+from tabnanny import check
 from typing import Any
 
 import anyconfig
@@ -12,7 +15,7 @@ import vscode
 from addict import Dict as AttrDict
 from vscode.context import Context
 
-ext = vscode.Extension(name="Zeicold.Hide Folder")
+ext = vscode.Extension(name="Hide Folder")
 
 
 @ext.event
@@ -215,12 +218,10 @@ async def show_folder(ctx: Context):
     return await show_info(ctx, f"Showing {path_to_show}")
 
 
-if __name__ == "__main__":
-    repo_root = Path(__file__).resolve().parent
-    package_json_path = repo_root / "package.json"
-    package_json_path.unlink(missing_ok=True)
+def update_package_json() -> None:
+    """Update package.json."""
 
-    ext.run()
+    repo_root = Path(__file__).resolve().parent
 
     # update package.json
     package_json = AttrDict(anyconfig.load(repo_root / "package.json"))
@@ -253,4 +254,18 @@ if __name__ == "__main__":
             "group": "2_workspace",
         },
     ]
+    package_json.repository = subprocess.check_output(
+        "git config --get remote.origin.url",
+        shell=True,
+        encoding="utf-8",
+        errors="ignore",
+    ).strip()
     anyconfig.dump(package_json, repo_root / "package.json", "json", indent=4)
+
+
+if __name__ == "__main__":
+    ext.run()
+
+    # update package.json if not running as a vscode extension
+    if "--run-webserver" not in sys.argv:
+        update_package_json()
