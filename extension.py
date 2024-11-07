@@ -3,10 +3,8 @@
 """
 
 import os
-import subprocess
 import sys
 from pathlib import Path
-from tabnanny import check
 from typing import Any
 
 import anyconfig
@@ -222,8 +220,6 @@ def update_package_json() -> None:
     """Update package.json."""
 
     repo_root = Path(__file__).resolve().parent
-
-    # update package.json
     package_json = AttrDict(anyconfig.load(repo_root / "package.json"))
     package_json.displayName = "Hide Folder"
     package_json.description = __doc__.strip()
@@ -254,12 +250,21 @@ def update_package_json() -> None:
             "group": "2_workspace",
         },
     ]
-    package_json.repository = subprocess.check_output(
-        "git config --get remote.origin.url",
-        shell=True,
-        encoding="utf-8",
-        errors="ignore",
-    ).strip()
+    package_json.repository = {
+        "type": "git",
+        "url": "https://github.com/zcold/hide-folder.git",
+    }
+    package_json.bugs = {
+        "url": "https://github.com/zcold/hide-folder/issues",
+    }
+    package_json.publishers = ["semispot-ab"]
+    package_json.homepage = "https://github.com/zcold/hide-folder/blob/main/README.md"
+    package_json.license = "MIT"
+    package_json.categories = ["Other"]
+    package_json.keywords = ["vscode", "extension", "workspace", "folder", "hide"]
+    package_json.extensionKind = ["workspace"]
+    package_json.pricing = "free"
+
     anyconfig.dump(package_json, repo_root / "package.json", "json", indent=4)
 
 
